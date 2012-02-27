@@ -8,6 +8,6 @@ Gem::Specification.new do | spec |
   spec.homepage = 'https://github.com/namusyaka/Ruby4Misawa'
   spec.author = 'namusyaka'
   spec.email = 'namusyaka@gmail.com'
-  spec.files = %w( README.rdoc Ruby4Misawa-0.1.gemspec Gemfile lib lib/Ruby4Misawa.rb )
+  spec.files = %w( README.rdoc Ruby4Misawa-0.1.1.gemspec Gemfile lib lib/Ruby4Misawa.rb )
   spec.add_development_dependency('nokogiri')
 end
