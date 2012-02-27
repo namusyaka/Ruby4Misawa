@@ -11,6 +11,7 @@ gem install Ruby4Misawa でおk
 
 == つかいかた
 
+libにあるRuby4Misawa.rbを適当に移動して、
 ruby Ruby4Misawa.rb [オプション] [値]
 
 [-t [uri, save]] uriは画像のURIを出力、saveは保存しまくる。permission関係でこける可能性はありけり。
