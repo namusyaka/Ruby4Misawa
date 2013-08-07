@@ -1,12 +1,12 @@
-= Ruby4Misawa
+# Ruby4Misawa
 
-== About
+## About
 
 A scraping library for 地獄のミサワ
 
 This is not compatible with old version.
 
-== Installation
+## Installation
 
 add this line to your Gemfile.
 
@@ -16,36 +16,36 @@ or
 
 `$ gem install Ruby4Misawa`
 
-== Usage
+## Usage
 
-=== cid
+### cid
 
 ```ruby
 require 'Ruby4Misawa'
 
 misawa = Misawa.new(32)
-misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
+misawa.scrape ##> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
 ```
 
-=== name
+### name
 
 ```ruby
 require 'Ruby4Misawa'
 
 misawa = Misawa.new("あつしさん")
-misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
+misawa.scrape ##> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
 ```
 
-=== designating page numebr
+### designating page numebr
 
 ```ruby
 require 'Ruby4Misawa'
 
 misawa = Misawa.new("あつしさん", 2)
-misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
+misawa.scrape ##> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
 ```
 
-== Contributing
+## Contributing
 
 1. fork the project.
 2. create your feature branch. (`git checkout -b my-feature`)
@@ -53,6 +53,6 @@ misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => 
 4. push to the branch. (`git push origin my-feature`)
 5. send pull request.
 
-== License
+## License
 
 MIT
