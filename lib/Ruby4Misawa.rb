@@ -1,102 +1,62 @@
-# -*- encoding: UTF-8 -*-
-
-%w(
-  uri
-  open-uri
-  kconv
-  optparse
-  rubygems
-  nokogiri
-).each { | name | require name }
+require 'open-uri'
+require 'kconv'
+require 'rubygems'
+require 'nokogiri'
 
 class Misawa
-
-  class NotFoundError < ArgumentError; end;
-
-  DOMAIN = 'http://jigokuno.com/'
-
+  DOMAIN       = 'http://jigokuno.com/'
   @@categories = {}
+
+  class NotFoundError < ArgumentError; end
 
   Nokogiri.HTML(open(DOMAIN).read).css('dl').each do |dl|
     if dl.children[0].inner_html.toutf8 == '惚れさせ男子達'
-      dl.children[2].children[1].children.to_a.delete_if{|node| node.class == Nokogiri::XML::Text}.each do |li|
+      dl.children[2].children[1].children.to_a.delete_if{|node|node.class == Nokogiri::XML::Text}.each do |li|
         a = li.child
         @@categories[a.text.scan(/(.+?)(?:\([0-9]+\))?$/)[0][0]] = a[:href].scan(/cid=([0-9]+)/)[0][0]
       end
     end
   end
 
-  attr_reader :category, :page
-
-  def initialize(category, page = 0)
-    raise NotFoundError unless @@categories[category]
-    @category = @@categories[category]
-    @page = page =~ /^[0-9]+?\.\.[0-9]+?$/ ? eval(page) : page
+  def initialize(name, page = 0)
+    @name = name
+    @cid  = @name.is_a?(Integer) ? @name : name_to_cid(@name)
+    @page = page
   end
 
   def scrape
-    create_uri.inject([]) do | result, uri |
-      body = get_body(uri)
-      Nokogiri.HTML(body).css('img.pict').map { | img | result << img['src'] } if body
-      result
+    data = []
+
+    begin
+      nokogiri = Nokogiri.HTML(open(misawa_uri).read)
+    rescue OpenURI::HTTPError
+      raise NotFoundError
     end
-  end
 
-  class << self;
-
-    def save_misawa(category, page)
-      misawa = self.new(category, page)
-      misawa.scrape.each_with_index do | src, i |
-        File.open("#{misawa.category}-#{i}.gif", 'w') { | f | f.write(misawa.get_body(src)) }
+    # parse some attributes
+    nokogiri.xpath('//comment()[contains(., "rdf")]').each do |entry|
+      attributes = Nokogiri.XML(entry.to_s.toutf8.gsub(/^<!--|-->$/, "")).child.css('rdf|Description')[0].attributes
+      data << %w[title date identifier].inject({}) do |result, key|
+        result[key.to_sym] = attributes[key].value
+        result
       end
     end
 
-    def uri_misawa(category, page)
-      misawa = self.new(category, page)
-      misawa.scrape.each_with_index do | src, i |
-        puts "#{misawa.category}-#{i} : #{src} "
-      end
-    end
+    # parse images
+    nokogiri.css('img.pict').to_a.each_with_index { |image, i|
+      data[i].merge!(:image => image['src'], :body => image['alt'])
+    }
 
-    def method_missing(name, *args)
-      raise ArgumentError;
-    end
-
+    data
   end
 
-  def get_body(uri)
-    open(URI.encode(uri)).read
+  private
+
+  def misawa_uri
+    "#{DOMAIN}?cid=#{@cid}&page=#{@page}"
   end
 
-  def create_uri
-    if @page.is_a?(Range)
-      base = "#{DOMAIN}/?cid=#{@category}&page="
-      @page.map { | i | "#{base}#{i}" }
-    else
-      ["#{DOMAIN}/?cid=#{@category}&page=#{@page}"]
-    end
+  def name_to_cid(name)
+    @@categories[name]
   end
-
-end
-
-if $0 === __FILE__
-
-  OptionParser.new do | opt |
-
-    arguments = {}
-
-    opt.on('-t [TYPE]', '--type [TYPE]') do | value |
-      arguments[:type] = value
-    end
-    opt.on('-p [PAGE]', '--page [PAGE]') do | value |
-      arguments[:page] = value
-    end
-    opt.on('-c [CATEGORY]', '--category [CATEGORY]') do | value |
-      arguments[:category] = value
-    end
-
-    opt.parse!(ARGV)
-    Misawa.send("#{arguments[:type] || 'uri'}_misawa", arguments[:category], arguments[:page])
-  end
-
 end

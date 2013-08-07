@@ -1,27 +1,58 @@
 = Ruby4Misawa
 
-== これはなにか
+== About
 
-- 地獄のミサワの画像を取ってくるやつ
-- 画像はURLで出力するか、保存するかを選ぶ
+A scraping library for 地獄のミサワ
 
-== インストール
+This is not compatible with old version.
 
-gem install Ruby4Misawa でおk
+== Installation
 
-== つかいかた
+add this line to your Gemfile.
 
-libにあるRuby4Misawa.rbを適当に移動して、
-ruby Ruby4Misawa.rb [オプション] [値]
+`gem 'botch'`
 
-[-t [uri, save]] uriは画像のURIを出力、saveは保存しまくる。permission関係でこける可能性はありけり。
-[-c [カテゴリ名]] ルシフェル や バイトリーダーのように指定。一つしか指定できないので注意。
-[-p [対象ページ]] 1 や 0のような数値か、0..5のようにRange形式で指定
+or
 
---type, --category, --pageでも可
+`$ gem install Ruby4Misawa`
 
-ちなみに何も指定しないと地獄のミサワのトップページにあるミサワ画像(と思われるもの)を取ってくる
+== Usage
 
-== 備考
+=== cid
 
-なんかおかしかったらすいません
+```ruby
+require 'Ruby4Misawa'
+
+misawa = Misawa.new(32)
+misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
+```
+
+=== name
+
+```ruby
+require 'Ruby4Misawa'
+
+misawa = Misawa.new("あつしさん")
+misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
+```
+
+=== designating page numebr
+
+```ruby
+require 'Ruby4Misawa'
+
+misawa = Misawa.new("あつしさん", 2)
+misawa.scrape #=> [{ :image => ..., :title => ..., :date => ..., :identifier => ..., :body => ... }, ...]
+```
+
+== Contributing
+
+1. fork the project.
+2. create your feature branch. (`git checkout -b my-feature`)
+3. commit your changes. (`git commit -am 'commit message.'`)
+4. push to the branch. (`git push origin my-feature`)
+5. send pull request.
+
+== License
+
+MIT
