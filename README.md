@@ -10,7 +10,7 @@ This is not compatible with old version.
 
 add this line to your Gemfile.
 
-`gem 'botch'`
+`gem 'Ruby4Misawa'`
 
 or
 
